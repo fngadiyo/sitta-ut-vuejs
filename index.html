@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SITTA - Tugas Praktik 2</title>
+  <meta name="description" content="Beranda tugas praktik 2 mata kuliah Pemrograman Berbasis Web (STSI4209): aplikasi SITTA untuk stok bahan ajar dan tracking delivery order dengan Vue.js.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Interstate:wght@400;600;700&family=Red+Hat+Display:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/sidebar-preload.js"></script>
+</head>
+<body>
+  <div class="utility-bar">
+    <div class="utility-bar-inner">
+      <span>Universitas Terbuka &mdash; Sistem Informasi Tiras dan Transaksi Bahan Ajar</span>
+      <div class="utility-links">
+        <a href="https://www.ut.ac.id" target="_blank" rel="noopener">Situs UT</a>
+        <a href="https://myut.ut.ac.id" target="_blank" rel="noopener">MyUT</a>
+      </div>
+    </div>
+  </div>
+
+  <header class="masthead">
+    <div class="masthead-inner">
+      <a class="brand" href="index.html">
+        <img class="brand-logo" src="img/logo-ut.png" alt="Logo Universitas Terbuka" width="58" height="58">
+        <span class="brand-text">
+          <strong>SITTA</strong>
+          <small>Sistem Informasi Tiras dan Transaksi Bahan Ajar</small>
+        </span>
+      </a>
+      <div class="masthead-actions">
+        <span class="masthead-session">Tugas Praktik 2 &middot; Vue.js &middot; STSI4209</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-expanded="true" aria-controls="sidebar">
+        <span class="sidebar-toggle-icon" aria-hidden="true"></span>
+        <span class="sidebar-toggle-text">Ciutkan menu</span>
+      </button>
+      <h2>Menu Utama</h2>
+      <nav>
+        <a class="nav-link active" href="index.html" data-hint="Beranda">
+          <span class="nav-icon" aria-hidden="true">HM</span>
+          <span class="nav-link-label">Beranda</span>
+        </a>
+        <a class="nav-link" href="stok.html" data-hint="Stok Bahan Ajar">
+          <span class="nav-icon" aria-hidden="true">SB</span>
+          <span class="nav-link-label">Stok Bahan Ajar</span>
+        </a>
+        <a class="nav-link" href="tracking.html" data-hint="Tracking DO">
+          <span class="nav-icon" aria-hidden="true">TR</span>
+          <span class="nav-link-label">Tracking DO</span>
+        </a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Praktikum Vue.js</p>
+          <h1>Tugas Praktik 2 &mdash; SITTA</h1>
+        </div>
+        <span class="user-chip" id="sapaan">Selamat datang</span>
+      </header>
+
+      <section class="hero">
+        <p class="eyebrow">STSI4209</p>
+        <h2>Aplikasi pemesanan dan distribusi bahan ajar</h2>
+        <p>Simulasi antarmuka SITTA Universitas Terbuka yang dibangun dengan Vue.js 2. Pilih halaman di bawah untuk melihat penerapan directive, data binding, conditional, computed property, watcher, dan validasi formulir.</p>
+      </section>
+
+      <div class="card-grid">
+        <a class="menu-card" href="stok.html">
+          <span class="icon" aria-hidden="true">SB</span>
+          <h3>Stok Bahan Ajar</h3>
+          <p>Daftar bahan ajar dengan filter bertingkat (UT-Daerah lalu kategori), sort judul/stok/harga, edit stok, ringkasan otomatis, status ketersediaan, serta formulir tambah yang tervalidasi.</p>
+          <p class="eyebrow">Buka halaman &rarr;</p>
+        </a>
+        <a class="menu-card" href="tracking.html">
+          <span class="icon" aria-hidden="true">TR</span>
+          <h3>Tracking DO</h3>
+          <p>Buat delivery order baru dengan nomor DO otomatis, pilih paket beserta isinya, lalu lacak status, ekspedisi, total pembayaran, dan riwayat perjalanan.</p>
+          <p class="eyebrow">Buka halaman &rarr;</p>
+        </a>
+      </div>
+
+      <section class="panel">
+        <h2>Penerapan Vue.js</h2>
+        <div class="detail-grid">
+          <div class="detail">
+            <small>Data binding</small>
+            <strong>Mustache, v-text, v-html, v-bind, v-model</strong>
+          </div>
+          <div class="detail">
+            <small>Conditional</small>
+            <strong>v-if, v-else-if, v-else, v-show</strong>
+          </div>
+          <div class="detail">
+            <small>Property</small>
+            <strong>Computed &amp; methods</strong>
+          </div>
+          <div class="detail">
+            <small>Watcher</small>
+            <strong>Minimal 2 watcher per halaman</strong>
+          </div>
+          <div class="detail">
+            <small>Formulir</small>
+            <strong>Input, filter, dan validasi sederhana</strong>
+          </div>
+        </div>
+        <p class="hint-line">Struktur proyek: <code>index.html</code>, <code>stok.html</code>, <code>tracking.html</code>, <code>css/style.css</code>, <code>js/stok-app.js</code>, <code>js/tracking-app.js</code>.</p>
+      </section>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="site-footer-inner">
+      <div>
+        <h2>SITTA</h2>
+        <p>Sistem Informasi Tiras dan Transaksi Bahan Ajar Universitas Terbuka. Halaman ini adalah tugas praktik mata kuliah Pemrograman Berbasis Web (STSI4209) dan menampilkan simulasi antarmuka berbasis Vue.js 2.</p>
+      </div>
+      <div>
+        <h3>Menu</h3>
+        <ul>
+          <li><a href="index.html">Beranda</a></li>
+          <li><a href="stok.html">Stok Bahan Ajar</a></li>
+          <li><a href="tracking.html">Tracking DO</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Layanan UT</h3>
+        <ul>
+          <li><a href="https://www.ut.ac.id" target="_blank" rel="noopener">Situs UT</a></li>
+          <li><a href="https://myut.ut.ac.id" target="_blank" rel="noopener">MyUT</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bar">
+      <div class="footer-bar-inner">
+        <div class="footer-bar-accent"></div>
+        <small>&copy; Universitas Terbuka &middot; Tugas Praktik 2 &middot; Pemrograman Berbasis Web (STSI4209)</small>
+      </div>
+    </div>
+  </footer>
+  <script src="js/sidebar.js"></script>
+  <script src="js/transisi.js"></script>
+  <script src="js/sapaan.js"></script>
+</body>
+</html>

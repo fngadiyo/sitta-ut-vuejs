@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SITTA - Tracking DO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Interstate:wght@400;600;700&family=Red+Hat+Display:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/sidebar-preload.js"></script>
+</head>
+<body>
+  <div id="app" v-cloak>
+    <div class="utility-bar">
+      <div class="utility-bar-inner">
+        <span>Universitas Terbuka &mdash; Sistem Informasi Tiras dan Transaksi Bahan Ajar</span>
+        <nav class="utility-links" aria-label="Tautan layanan">
+          <a href="https://www.ut.ac.id" target="_blank" rel="noopener">Situs UT</a>
+          <a href="https://myut.ut.ac.id" target="_blank" rel="noopener">MyUT</a>
+        </nav>
+      </div>
+    </div>
+
+    <header class="masthead">
+      <div class="masthead-inner">
+        <a class="brand" href="index.html">
+          <img class="brand-logo" src="img/logo-ut.png" alt="Logo Universitas Terbuka" width="58" height="58">
+          <span class="brand-text">
+            <strong>SITTA</strong>
+            <small>Sistem Informasi Tiras dan Transaksi Bahan Ajar</small>
+          </span>
+        </a>
+        <div class="masthead-actions">
+          <span class="masthead-session">Tugas Praktik 2 &middot; Vue.js &middot; STSI4209</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-expanded="true" aria-controls="sidebar">
+          <span class="sidebar-toggle-icon" aria-hidden="true"></span>
+          <span class="sidebar-toggle-text">Ciutkan menu</span>
+        </button>
+        <h2>Menu Utama</h2>
+        <nav aria-label="Menu utama">
+          <a class="nav-link" href="index.html" data-hint="Beranda">
+            <span class="nav-icon" aria-hidden="true">HM</span>
+            <span class="nav-link-label">Beranda</span>
+          </a>
+          <a class="nav-link" href="stok.html" data-hint="Stok Bahan Ajar">
+            <span class="nav-icon" aria-hidden="true">SB</span>
+            <span class="nav-link-label">Stok Bahan Ajar</span>
+          </a>
+          <a class="nav-link active" href="tracking.html" data-hint="Tracking DO">
+            <span class="nav-icon" aria-hidden="true">TR</span>
+            <span class="nav-link-label">Tracking DO</span>
+          </a>
+        </nav>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Pengiriman</p>
+            <h1>Tracking Delivery Order</h1>
+            <p class="muted">Masukkan nomor DO untuk melihat status pengiriman bahan ajar.</p>
+          </div>
+          <span class="user-chip" id="sapaan">Selamat datang</span>
+        </header>
+
+        <section class="panel">
+          <h2>Cari Delivery Order</h2>
+          <form class="search-form" @submit.prevent="cariDO" novalidate>
+            <label class="sr-only" for="nomorDO">Nomor Delivery Order</label>
+            <input id="nomorDO" v-model.trim="nomorDO" placeholder="Contoh: DO2025-0001" autocomplete="off" @input="errorCari = ''">
+            <button class="btn btn-primary" type="submit">Cari</button>
+            <button class="btn" type="button" @click="reset">Reset</button>
+          </form>
+
+          <p class="alert alert-info" v-show="pesanCari">{{ pesanCari }}</p>
+          <p class="field-error" v-if="errorCari">{{ errorCari }}</p>
+
+          <p class="eyebrow demo-label">Nomor DO tersedia</p>
+          <ul class="demo-list">
+            <li v-for="kode in daftarDO" :key="kode">
+              <button class="demo-fill" type="button" @click="pilihDO(kode)">{{ kode }}</button>
+            </li>
+          </ul>
+
+          <p class="hint-line">Data contoh: <strong>DO2025-0001</strong> &mdash; Rina Wulandari, status Dalam Perjalanan.</p>
+        </section>
+
+        <section v-if="hasil" class="panel" aria-live="polite">
+          <div class="tracking-header">
+            <div>
+              <p class="eyebrow">Hasil Pencarian</p>
+              <h2>{{ hasil.nama }}</h2>
+              <p class="muted">NIM {{ hasil.nim }} &middot; {{ hasil.paket }}</p>
+            </div>
+            <span class="badge" :class="kelasStatus">{{ hasil.status }}</span>
+          </div>
+
+          <div class="progress" role="progressbar" :aria-valuenow="persenStatus" aria-valuemin="0" aria-valuemax="100" :aria-label="'Progress pengiriman ' + persenStatus + ' persen'">
+            <span :style="{ width: persenStatus + '%' }"></span>
+          </div>
+          <p class="muted">Progress pengiriman: <strong>{{ persenStatus }}%</strong> &middot; status {{ hasil.status }}.</p>
+
+          <dl class="detail-grid">
+            <div class="detail">
+              <small>Nomor DO</small>
+              <strong>{{ nomorDICari }}</strong>
+            </div>
+            <div class="detail">
+              <small>Ekspedisi</small>
+              <strong v-text="hasil.ekspedisi"></strong>
+            </div>
+            <div class="detail">
+              <small>Tanggal Kirim</small>
+              <strong>{{ hasil.tanggalKirim }}</strong>
+            </div>
+            <div class="detail">
+              <small>Total Pembayaran</small>
+              <strong>{{ formatRupiah(hasil.total) }}</strong>
+            </div>
+          </dl>
+
+          <h3>Isi Paket</h3>
+          <ul class="demo-list" v-show="paketDitemukan">
+            <li v-for="kode in paketDitemukan.isi" :key="kode">
+              <span class="badge badge-info">{{ kode }}</span>
+            </li>
+          </ul>
+          <p class="muted" v-if="paketDitemukan">{{ paketDitemukan.nama }} &mdash; {{ formatRupiah(paketDitemukan.harga) }}</p>
+
+          <h3>Riwayat Perjalanan</h3>
+          <ol class="timeline">
+            <li class="timeline-item" :class="{ current: index === hasil.perjalanan.length - 1 }" v-for="(jejak, index) in hasil.perjalanan" :key="index">
+              <span class="timeline-time">{{ jejak.waktu }}</span>
+              <span class="timeline-text">{{ jejak.keterangan }}</span>
+            </li>
+          </ol>
+          <p class="hint-line" v-if="hasil.perjalanan.length === 0">Belum ada riwayat perjalanan.</p>
+        </section>
+
+        <section v-else-if="sudahCari" class="panel" aria-live="polite">
+          <p class="alert alert-danger">Nomor DO <strong>{{ nomorDICari }}</strong> tidak ditemukan. Periksa kembali nomor delivery order Anda.</p>
+          <p class="muted">Nomor DO yang tersedia: <strong>{{ daftarDO.join(', ') }}</strong>.</p>
+        </section>
+
+        <section v-else class="panel">
+          <p class="empty-state">Belum ada pencarian. Masukkan nomor DO di atas, misalnya <strong>DO2025-0001</strong>, lalu tekan Cari.</p>
+        </section>
+
+        <section class="panel" aria-labelledby="judul-buat-do">
+          <h2 id="judul-buat-do">Buat Delivery Order Baru</h2>
+          <p class="muted">Nomor DO dibuat otomatis dari tahun berjalan dan urutan data terakhir.</p>
+          <p class="alert alert-success" v-if="pesanBuat">{{ pesanBuat }}</p>
+          <form novalidate @submit.prevent="buatDO">
+            <div class="form-grid">
+              <div>
+                <label for="do-nomor">Nomor DO</label>
+                <input id="do-nomor" type="text" :value="nomorDOBaru" readonly>
+                <p class="hint-line">otomatis</p>
+              </div>
+              <div>
+                <label for="do-nim">NIM</label>
+                <input id="do-nim" type="text" v-model.trim="formDO.nim" placeholder="Contoh: 123456789">
+                <span class="field-error" v-if="errorBuat.nim">{{ errorBuat.nim }}</span>
+              </div>
+              <div>
+                <label for="do-nama">Nama</label>
+                <input id="do-nama" type="text" v-model.trim="formDO.nama" placeholder="Contoh: Rina Wulandari">
+                <span class="field-error" v-if="errorBuat.nama">{{ errorBuat.nama }}</span>
+              </div>
+              <div>
+                <label for="do-ekspedisi">Ekspedisi</label>
+                <select id="do-ekspedisi" v-model="formDO.ekspedisi">
+                  <option value="">Pilih ekspedisi</option>
+                  <option v-for="e in pengirimanList" :key="e.kode" :value="e.kode">{{ e.kode }} &mdash; {{ e.nama }}</option>
+                </select>
+                <span class="field-error" v-if="errorBuat.ekspedisi">{{ errorBuat.ekspedisi }}</span>
+              </div>
+              <div>
+                <label for="do-paket">Paket Bahan Ajar</label>
+                <select id="do-paket" v-model="formDO.paket">
+                  <option value="">Pilih paket</option>
+                  <option v-for="p in paket" :key="p.kode" :value="p.kode">{{ p.kode }} &mdash; {{ p.nama }}</option>
+                </select>
+                <span class="field-error" v-if="errorBuat.paket">{{ errorBuat.paket }}</span>
+                <p class="alert alert-info" v-if="paketBaru">Isi paket <strong>{{ paketBaru.kode }}</strong> &mdash; {{ paketBaru.nama }}:
+                  <span v-for="kode in paketBaru.isi" :key="kode" class="badge badge-info">{{ kode }}</span>
+                </p>
+              </div>
+              <div>
+                <label for="do-tanggal">Tanggal Kirim</label>
+                <input id="do-tanggal" type="date" v-model="formDO.tanggalKirim">
+                <span class="field-error" v-if="errorBuat.tanggalKirim">{{ errorBuat.tanggalKirim }}</span>
+              </div>
+              <div>
+                <label for="do-total">Total Harga</label>
+                <input id="do-total" type="text" :value="totalBaru" readonly>
+                <p class="hint-line">otomatis dari paket</p>
+              </div>
+            </div>
+            <p class="field-error" v-if="errorBuat.umum">{{ errorBuat.umum }}</p>
+            <div class="form-actions">
+              <button class="btn btn-primary" type="submit">Buat Delivery Order</button>
+              <button class="btn" type="button" @click="resetFormDO">Bersihkan</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel" v-if="riwayat.length">
+          <h2>Riwayat Pencarian</h2>
+          <ul class="demo-list">
+            <li v-for="kode in riwayat" :key="kode">
+              <button class="demo-fill" type="button" @click="pilihDO(kode)">{{ kode }}</button>
+            </li>
+          </ul>
+        </section>
+      </main>
+    </div>
+
+    <footer class="site-footer">
+      <div class="site-footer-inner">
+        <div>
+          <h2>SITTA</h2>
+          <p>Aplikasi simulasi front-end Tugas Praktik 2 &mdash; Pemrograman Berbasis Web (STSI4209). Data bersifat simulasi.</p>
+        </div>
+        <div>
+          <h3>Menu</h3>
+          <ul>
+            <li><a href="index.html">Beranda</a></li>
+            <li><a href="stok.html">Stok Bahan Ajar</a></li>
+            <li><a href="tracking.html">Tracking DO</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Layanan UT</h3>
+          <ul>
+            <li><a href="https://www.ut.ac.id" target="_blank" rel="noopener">Situs UT</a></li>
+            <li><a href="https://myut.ut.ac.id" target="_blank" rel="noopener">MyUT</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bar">
+        <div class="footer-bar-inner">
+          <div class="footer-bar-accent"></div>
+          <small>&copy; Universitas Terbuka &middot; Tugas Praktik 2 &middot; Pemrograman Berbasis Web (STSI4209)</small>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="js/sidebar.js"></script>
+  <script src="js/transisi.js"></script>
+  <script src="js/sapaan.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.min.js"></script>
+  <script src="js/tracking-app.js"></script>
+</body>
+</html>
